@@ -582,7 +582,7 @@ body {
 
 /* Running state (yesBtn in final stage runs away) */
 .btn-run {
-    position: fixed !important;
+    position: absolute !important;
     z-index: 500;
     transition: left 0.32s var(--ease-spring), top 0.32s var(--ease-spring) !important;
     pointer-events: auto;

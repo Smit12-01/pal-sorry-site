@@ -299,44 +299,51 @@ noBtn.addEventListener('click', () => {
     }
 });
 
-// ─── Run-Away Button (hover in RUN state) ────────────
-yesBtn.addEventListener('mouseenter', () => {
+// ─── Run-Away Button (hover/touch in RUN state) ──────
+function runAway(e) {
     if (currentState !== S.RUN) return;
+    
+    if (e && e.type === 'touchstart') {
+        e.preventDefault();
+    }
 
-    const margin = 56;
-    const btnW = yesBtn.offsetWidth || 130;
-    const btnH = yesBtn.offsetHeight || 46;
+    const cardRect = glassCard.getBoundingClientRect();
+    const btnW = yesBtn.offsetWidth || 120;
+    const btnH = yesBtn.offsetHeight || 44;
 
     if (!isRunning) {
-        // Snap to fixed positioning from current location
-        const rect = yesBtn.getBoundingClientRect();
+        // Position relative to glassCard container
+        const btnRect = yesBtn.getBoundingClientRect();
+        const initialLeft = btnRect.left - cardRect.left;
+        const initialTop = btnRect.top - cardRect.top;
+
         yesBtn.classList.add('btn-run');
-        yesBtn.style.left = rect.left + 'px';
-        yesBtn.style.top = rect.top + 'px';
-        yesBtn.style.width = rect.width + 'px';
+        yesBtn.style.position = 'absolute';
+        yesBtn.style.left = initialLeft + 'px';
+        yesBtn.style.top = initialTop + 'px';
+        yesBtn.style.width = btnW + 'px';
         yesBtn.style.margin = '0';
+        yesBtn.style.zIndex = '500';
         isRunning = true;
     }
 
-    const maxX = window.innerWidth - btnW - margin;
-    const maxY = window.innerHeight - btnH - margin;
+    const padding = 12;
+    const minX = padding;
+    const maxX = cardRect.width - btnW - padding;
+    const minY = padding;
+    const maxY = cardRect.height - btnH - padding;
 
-    const newX = Math.floor(Math.random() * (maxX - margin)) + margin;
-    const newY = Math.floor(Math.random() * (maxY - margin)) + margin;
+    // Generate random positions safely inside the card
+    const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
+    const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
 
-    yesBtn.style.left = newX + 'px';
-    yesBtn.style.top = newY + 'px';
-});
+    yesBtn.style.left = randomX + 'px';
+    yesBtn.style.top = randomY + 'px';
+}
 
-// Touch equivalent for run state — shrink on tap
-yesBtn.addEventListener('touchstart', (e) => {
-    if (currentState !== S.RUN) return;
-    e.preventDefault();
-
-    // On mobile: just wiggle the button, can't really run from touch
-    yesBtn.style.transform = 'scale(0.88)';
-    setTimeout(() => { yesBtn.style.transform = ''; }, 300);
-}, { passive: false });
+yesBtn.addEventListener('mouseenter', runAway);
+yesBtn.addEventListener('mouseover', runAway);
+yesBtn.addEventListener('touchstart', runAway, { passive: false });
 
 // ─── Loading Screen ───────────────────────────────────
 function runLoadingBar() {
