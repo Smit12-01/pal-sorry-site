@@ -183,6 +183,8 @@ function applyState(key) {
     yesBtn.classList.remove('btn-run');
     yesBtn.style.left = '';
     yesBtn.style.top = '';
+    yesBtn.style.right = '';
+    yesBtn.style.bottom = '';
     yesBtn.style.margin = '';
     yesBtn.style.position = '';
     yesBtn.style.zIndex = '';
@@ -310,33 +312,31 @@ function runAway(e) {
     const isDesktop = window.innerWidth > 768;
 
     if (isDesktop) {
-        const btnW = yesBtn.offsetWidth || 120;
-        const btnH = yesBtn.offsetHeight || 44;
+        const rect = yesBtn.getBoundingClientRect();
 
         if (!isRunning) {
-            const btnRect = yesBtn.getBoundingClientRect();
             yesBtn.classList.add('btn-run');
             yesBtn.style.setProperty('position', 'fixed', 'important');
-            yesBtn.style.left = btnRect.left + 'px';
-            yesBtn.style.top = btnRect.top + 'px';
-            yesBtn.style.width = btnW + 'px';
+            yesBtn.style.left = rect.left + 'px';
+            yesBtn.style.top = rect.top + 'px';
+            yesBtn.style.width = rect.width + 'px';
             yesBtn.style.margin = '0';
-            yesBtn.style.zIndex = '500';
+            yesBtn.style.zIndex = '9999';
             isRunning = true;
         }
 
-        const padding = 20;
-        const minX = padding;
-        const maxX = window.innerWidth - btnW - padding;
-        const minY = padding;
-        const maxY = window.innerHeight - btnH - padding;
+        const maxX = window.innerWidth - rect.width - 24;
+        const maxY = window.innerHeight - rect.height - 24;
+        const minX = 24;
+        const minY = 24;
 
-        // Generate random positions safely inside the browser viewport
-        const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
-        const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
+        const x = Math.random() * (maxX - minX) + minX;
+        const y = Math.random() * (maxY - minY) + minY;
 
-        yesBtn.style.left = randomX + 'px';
-        yesBtn.style.top = randomY + 'px';
+        yesBtn.style.left = x + "px";
+        yesBtn.style.top = y + "px";
+        yesBtn.style.right = "auto";
+        yesBtn.style.bottom = "auto";
     } else {
         const cardRect = glassCard.getBoundingClientRect();
         const btnW = yesBtn.offsetWidth || 120;
