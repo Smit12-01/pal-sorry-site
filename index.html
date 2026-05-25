@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="something honest, just for you.">
+    <title>for my favorite person 🤍</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Dancing+Script:wght@500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+    <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+    <!-- Floating Particles -->
+    <canvas id="particlesCanvas" aria-hidden="true"></canvas>
+
+    <!-- Ambient Orbs -->
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+    <div class="orb orb-3" aria-hidden="true"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen" role="status" aria-label="Loading">
+        <div class="loading-inner">
+            <div class="loading-hearts" aria-hidden="true">
+                <span class="lheart lheart-1">🤍</span>
+                <span class="lheart lheart-2">🤍</span>
+                <span class="lheart lheart-3">🤍</span>
+            </div>
+            <p class="loading-label">loading something honest…</p>
+            <div class="loading-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                <div class="loading-bar-fill" id="loadingBarFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Music Toggle -->
+    <button class="music-btn" id="musicBtn" aria-label="Toggle ambient music" aria-pressed="false">
+        <svg class="music-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round" />
+            <circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.5" />
+            <circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.5" />
+        </svg>
+        <span class="music-label-txt" id="musicLabelTxt">music</span>
+    </button>
+
+    <!-- Main Experience -->
+    <main class="container" id="mainContainer">
+        <div class="glass-card" id="glassCard">
+
+            <!-- Shimmer accent -->
+            <div class="card-stars" aria-hidden="true">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+            <!-- Question heading -->
+            <h1 class="question" id="question">suno na… Palllllll</h1>
+
+            <!-- Handwritten sub-line -->
+            <p class="micro-text" id="microText">okay this took embarrassingly long to make</p>
+
+            <!-- Image area -->
+            <div class="img-wrap" id="imgWrap">
+                <img class="main-gif" id="mainGif" src="images/cute.gif" alt="emotional expression gif">
+                <div class="img-glow" aria-hidden="true"></div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="btn-group" id="btnGroup">
+                <button class="btn btn-yes" id="yesBtn">bolo na 🤍</button>
+                <button class="btn btn-no" id="noBtn">nahi</button>
+            </div>
+
+            <!-- Final message (hidden until final state) -->
+            <div class="final-msg" id="finalMsg" aria-live="polite">
+                <p class="final-main">hehehe… i knew it all along 🫶</p>
+                <p class="final-sub">i still think your smile clears every bug in my life</p>
+                <p class="final-hand">— made with way too much effort and one playlist on repeat</p>
+            </div>
+
+            <!-- Bottom doodle -->
+            <div class="card-dots" aria-hidden="true">· &nbsp; · &nbsp; ·</div>
+        </div>
+    </main>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
