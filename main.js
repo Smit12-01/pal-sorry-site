@@ -261,18 +261,31 @@ function runLoadingBar() {
         loadingBarFill.style.width = progress + '%';
 
         if (progress >= 100) {
-            clearInterval(tick);
+            clearLoader();
+        }
+    }, 110);
 
-            setTimeout(() => {
+    // Failsafe timeout to force hide loader after 2 seconds max
+    const failsafe = setTimeout(() => {
+        clearLoader();
+    }, 2000);
+
+    function clearLoader() {
+        clearInterval(tick);
+        clearTimeout(failsafe);
+        loadingBarFill.style.width = '100%';
+
+        setTimeout(() => {
+            if (!loadingScreen.classList.contains('hidden')) {
                 loadingScreen.classList.add('hidden');
                 musicBtn.classList.add('visible');
 
                 setTimeout(() => {
                     glassCard.classList.add('visible');
                 }, 180);
-            }, 350);
-        }
-    }, 110);
+            }
+        }, 350);
+    }
 }
 
 // ─── Custom Cursor ────────────────────────────────────
@@ -481,7 +494,13 @@ wiggleStyle.textContent = `
 document.head.appendChild(wiggleStyle);
 
 // ─── Boot ─────────────────────────────────────────────
-window.addEventListener('load', () => {
+function boot() {
     runLoadingBar();
     tryPlayAudio();
-});
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    boot();
+} else {
+    window.addEventListener('load', boot);
+}
