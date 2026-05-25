@@ -684,6 +684,39 @@ body {
     }
 }
 
+/* ─── RUN State Specific Responsive Layout ─── */
+.run-state-card {
+    max-height: 90vh !important;
+    max-width: 440px !important;
+    padding: 24px 24px 20px !important;
+    gap: 4px !important;
+}
+
+.run-state-card .img-wrap {
+    margin: 2px auto 8px !important;
+    max-width: 200px !important;
+}
+
+.run-state-card .main-gif {
+    max-height: 180px !important;
+}
+
+.run-state-card .question {
+    font-size: clamp(1.3rem, 5vw, 1.8rem) !important;
+}
+
+/* Mobile vertical stack for buttons on this page */
+@media (max-width: 500px) {
+    .run-state-card .btn-group {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .run-state-card .btn {
+        width: 100% !important;
+        max-width: 220px !important;
+    }
+}
+
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

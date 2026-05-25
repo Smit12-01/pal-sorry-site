@@ -126,6 +126,12 @@ function applyState(key) {
     currentState = key;
     isRunning = false;
 
+    if (key === S.RUN) {
+        glassCard.classList.add('run-state-card');
+    } else {
+        glassCard.classList.remove('run-state-card');
+    }
+
     // Immediately hide and disable buttons during state change
     btnGroup.style.opacity = '0';
     btnGroup.style.pointerEvents = 'none';
@@ -216,6 +222,7 @@ function transitionTo(nextState) {
 function goFinal() {
     currentState = S.FINAL;
     isRunning = false;
+    glassCard.classList.remove('run-state-card');
 
     // Immediately hide and disable buttons
     btnGroup.style.opacity = '0';
