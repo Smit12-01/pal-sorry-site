@@ -329,9 +329,9 @@ function runAway(e) {
             isRunning = true;
         }
 
-        // Calculate secure bounds with 24px margins
-        const maxX = Math.max(24, window.innerWidth - rect.width - 24);
-        const maxY = Math.max(24, window.innerHeight - rect.height - 24);
+        // Calculate safe max and min positions
+        const maxX = window.innerWidth - rect.width - 24;
+        const maxY = window.innerHeight - rect.height - 24;
         const minX = 24;
         const minY = 24;
 
