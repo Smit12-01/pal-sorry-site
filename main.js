@@ -307,38 +307,70 @@ function runAway(e) {
         e.preventDefault();
     }
 
-    const cardRect = glassCard.getBoundingClientRect();
-    const btnW = yesBtn.offsetWidth || 120;
-    const btnH = yesBtn.offsetHeight || 44;
+    const isDesktop = window.innerWidth > 768;
 
-    if (!isRunning) {
-        // Position relative to glassCard container
-        const btnRect = yesBtn.getBoundingClientRect();
-        const initialLeft = btnRect.left - cardRect.left;
-        const initialTop = btnRect.top - cardRect.top;
+    if (isDesktop) {
+        const btnW = yesBtn.offsetWidth || 120;
+        const btnH = yesBtn.offsetHeight || 44;
 
-        yesBtn.classList.add('btn-run');
-        yesBtn.style.position = 'absolute';
-        yesBtn.style.left = initialLeft + 'px';
-        yesBtn.style.top = initialTop + 'px';
-        yesBtn.style.width = btnW + 'px';
-        yesBtn.style.margin = '0';
-        yesBtn.style.zIndex = '500';
-        isRunning = true;
+        if (!isRunning) {
+            const btnRect = yesBtn.getBoundingClientRect();
+            yesBtn.classList.add('btn-run');
+            yesBtn.style.setProperty('position', 'fixed', 'important');
+            yesBtn.style.left = btnRect.left + 'px';
+            yesBtn.style.top = btnRect.top + 'px';
+            yesBtn.style.width = btnW + 'px';
+            yesBtn.style.margin = '0';
+            yesBtn.style.zIndex = '500';
+            isRunning = true;
+        }
+
+        const padding = 20;
+        const minX = padding;
+        const maxX = window.innerWidth - btnW - padding;
+        const minY = padding;
+        const maxY = window.innerHeight - btnH - padding;
+
+        // Generate random positions safely inside the browser viewport
+        const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
+        const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
+
+        yesBtn.style.left = randomX + 'px';
+        yesBtn.style.top = randomY + 'px';
+    } else {
+        const cardRect = glassCard.getBoundingClientRect();
+        const btnW = yesBtn.offsetWidth || 120;
+        const btnH = yesBtn.offsetHeight || 44;
+
+        if (!isRunning) {
+            // Position relative to glassCard container
+            const btnRect = yesBtn.getBoundingClientRect();
+            const initialLeft = btnRect.left - cardRect.left;
+            const initialTop = btnRect.top - cardRect.top;
+
+            yesBtn.classList.add('btn-run');
+            yesBtn.style.setProperty('position', 'absolute', 'important');
+            yesBtn.style.left = initialLeft + 'px';
+            yesBtn.style.top = initialTop + 'px';
+            yesBtn.style.width = btnW + 'px';
+            yesBtn.style.margin = '0';
+            yesBtn.style.zIndex = '500';
+            isRunning = true;
+        }
+
+        const padding = 12;
+        const minX = padding;
+        const maxX = cardRect.width - btnW - padding;
+        const minY = padding;
+        const maxY = cardRect.height - btnH - padding;
+
+        // Generate random positions safely inside the card
+        const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
+        const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
+
+        yesBtn.style.left = randomX + 'px';
+        yesBtn.style.top = randomY + 'px';
     }
-
-    const padding = 12;
-    const minX = padding;
-    const maxX = cardRect.width - btnW - padding;
-    const minY = padding;
-    const maxY = cardRect.height - btnH - padding;
-
-    // Generate random positions safely inside the card
-    const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
-    const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
-
-    yesBtn.style.left = randomX + 'px';
-    yesBtn.style.top = randomY + 'px';
 }
 
 yesBtn.addEventListener('mouseenter', runAway);
