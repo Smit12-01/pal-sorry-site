@@ -22,6 +22,33 @@ const yesBtn = document.getElementById('yesBtn');
 const noBtn = document.getElementById('noBtn');
 const finalMsg = document.getElementById('finalMsg');
 
+// ─── Preloader Settings ──────────────────────────────
+const CRITICAL_IMAGES = [
+    'images/cute.gif',
+    'images/sorry.png',
+    'images/download.gif',
+    'images/sadlife.gif',
+    'images/run.gif',
+    'images/love.gif'
+];
+
+function preloadImages(urls, callback) {
+    let loaded = 0;
+    const total = urls.length;
+    if (total === 0) return callback();
+
+    urls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+        img.onload = img.onerror = () => {
+            loaded++;
+            if (loaded === total) {
+                callback();
+            }
+        };
+    });
+}
+
 // ─── State Machine ────────────────────────────────────
 const S = {
     INITIAL: 'initial',
@@ -78,6 +105,19 @@ const states = {
     }
 };
 
+// ─── Staggered Button Reveal ──────────────────────────
+function showButtonsWithDelay() {
+    const delay = 800 + Math.random() * 400; // 800ms - 1200ms
+    setTimeout(() => {
+        if (currentState !== S.FINAL) {
+            btnGroup.style.opacity = '1';
+            btnGroup.style.pointerEvents = 'auto';
+            yesBtn.disabled = false;
+            noBtn.disabled = false;
+        }
+    }, delay);
+}
+
 // ─── Apply a state to the UI ──────────────────────────
 function applyState(key) {
     const cfg = states[key];
@@ -86,11 +126,29 @@ function applyState(key) {
     currentState = key;
     isRunning = false;
 
+    // Immediately hide and disable buttons during state change
+    btnGroup.style.opacity = '0';
+    btnGroup.style.pointerEvents = 'none';
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+
     question.textContent = cfg.question;
     microText.textContent = cfg.micro;
 
-    // Swap gif with a tiny cross-fade
+    // Swap gif with onload listener to guarantee wait for image load
     mainGif.style.opacity = '0';
+    
+    let imageLoaded = false;
+    const onImageVisible = () => {
+        if (imageLoaded) return;
+        imageLoaded = true;
+        mainGif.style.opacity = '1';
+        showButtonsWithDelay();
+    };
+
+    mainGif.onload = onImageVisible;
+    mainGif.onerror = onImageVisible;
+
     setTimeout(() => {
         mainGif.src = cfg.gif;
 
@@ -102,13 +160,15 @@ function applyState(key) {
         if (cfg.gifStyle) {
             Object.assign(mainGif.style, cfg.gifStyle);
         }
-        mainGif.style.opacity = '1';
     }, 180);
+
+    // Failsafe for image onload
+    setTimeout(onImageVisible, 1500);
 
     yesBtn.textContent = cfg.yesLabel;
     noBtn.textContent = cfg.noLabel;
 
-    // Make sure buttons are visible
+    // Reset button display
     yesBtn.style.display = '';
     noBtn.style.display = '';
     btnGroup.style.display = '';
@@ -134,6 +194,11 @@ function transitionTo(nextState) {
 
     glassCard.classList.add('transitioning');
 
+    // Disable clicks during transition
+    btnGroup.style.pointerEvents = 'none';
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+
     setTimeout(() => {
         if (nextState === S.FINAL) {
             goFinal();
@@ -141,12 +206,9 @@ function transitionTo(nextState) {
             applyState(nextState);
         }
 
-        // Remove after a beat to let new content paint
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                glassCard.classList.remove('transitioning');
-            });
-        });
+        setTimeout(() => {
+            glassCard.classList.remove('transitioning');
+        }, 320);
     }, 320);
 }
 
@@ -155,29 +217,47 @@ function goFinal() {
     currentState = S.FINAL;
     isRunning = false;
 
+    // Immediately hide and disable buttons
+    btnGroup.style.opacity = '0';
+    btnGroup.style.pointerEvents = 'none';
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+
     question.textContent = 'hehehe… i knew it PAL 🫶';
     microText.textContent = '';
 
     mainGif.style.opacity = '0';
+    
+    let imageLoaded = false;
+    const onFinalImageVisible = () => {
+        if (imageLoaded) return;
+        imageLoaded = true;
+        mainGif.style.opacity = '1';
+        
+        // Show final message
+        finalMsg.style.display = 'flex';
+        requestAnimationFrame(() => finalMsg.classList.add('show'));
+
+        // Burst extra particles on final screen
+        spawnHeartBurst();
+    };
+
+    mainGif.onload = onFinalImageVisible;
+    mainGif.onerror = onFinalImageVisible;
+
     setTimeout(() => {
         mainGif.src = 'images/love.gif';
         mainGif.style.maxHeight = '';
         mainGif.style.width = '';
         mainGif.style.height = '';
-        mainGif.style.opacity = '1';
     }, 180);
+
+    setTimeout(onFinalImageVisible, 1500);
 
     btnGroup.style.display = 'none';
 
     // Reset running button
     yesBtn.classList.remove('btn-run');
-
-    // Show final message
-    finalMsg.style.display = 'flex';
-    requestAnimationFrame(() => finalMsg.classList.add('show'));
-
-    // Burst extra particles on final screen
-    spawnHeartBurst();
 }
 
 // ─── Button Logic (yes) ───────────────────────────────
@@ -254,23 +334,27 @@ yesBtn.addEventListener('touchstart', (e) => {
 // ─── Loading Screen ───────────────────────────────────
 function runLoadingBar() {
     let progress = 0;
+    let loadingBarCompleted = false;
+
+    // Start image preloading
+    preloadImages(CRITICAL_IMAGES, () => {
+        completeLoading();
+    });
 
     const tick = setInterval(() => {
-        const step = Math.random() * 18 + 6;
-        progress = Math.min(progress + step, 100);
+        const step = Math.random() * 12 + 4;
+        progress = Math.min(progress + step, 95); // Hold at 95% until preloading finishes
         loadingBarFill.style.width = progress + '%';
-
-        if (progress >= 100) {
-            clearLoader();
-        }
-    }, 110);
+    }, 100);
 
     // Failsafe timeout to force hide loader after 2 seconds max
     const failsafe = setTimeout(() => {
-        clearLoader();
+        completeLoading();
     }, 2000);
 
-    function clearLoader() {
+    function completeLoading() {
+        if (loadingBarCompleted) return;
+        loadingBarCompleted = true;
         clearInterval(tick);
         clearTimeout(failsafe);
         loadingBarFill.style.width = '100%';
@@ -282,6 +366,7 @@ function runLoadingBar() {
 
                 setTimeout(() => {
                     glassCard.classList.add('visible');
+                    showButtonsWithDelay(); // Stagger the first buttons reveal
                 }, 180);
             }
         }, 350);
