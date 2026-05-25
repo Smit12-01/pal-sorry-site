@@ -312,9 +312,11 @@ function runAway(e) {
     const isDesktop = window.innerWidth > 768;
 
     if (isDesktop) {
+        // Measure button size before modifying styles
         const rect = yesBtn.getBoundingClientRect();
 
         if (!isRunning) {
+            yesBtn.style.transition = 'none'; // Prevent flying off-screen transition jump
             yesBtn.classList.add('btn-run');
             yesBtn.style.setProperty('position', 'fixed', 'important');
             yesBtn.style.left = rect.left + 'px';
@@ -322,11 +324,14 @@ function runAway(e) {
             yesBtn.style.width = rect.width + 'px';
             yesBtn.style.margin = '0';
             yesBtn.style.zIndex = '9999';
+            yesBtn.offsetHeight; // Force reflow
+            yesBtn.style.transition = ''; // Restore smooth CSS transition
             isRunning = true;
         }
 
-        const maxX = window.innerWidth - rect.width - 24;
-        const maxY = window.innerHeight - rect.height - 24;
+        // Calculate secure bounds with 24px margins
+        const maxX = Math.max(24, window.innerWidth - rect.width - 24);
+        const maxY = Math.max(24, window.innerHeight - rect.height - 24);
         const minX = 24;
         const minY = 24;
 
@@ -343,6 +348,7 @@ function runAway(e) {
         const btnH = yesBtn.offsetHeight || 44;
 
         if (!isRunning) {
+            yesBtn.style.transition = 'none'; // Prevent flying off-screen transition jump
             // Position relative to glassCard container
             const btnRect = yesBtn.getBoundingClientRect();
             const initialLeft = btnRect.left - cardRect.left;
@@ -355,18 +361,20 @@ function runAway(e) {
             yesBtn.style.width = btnW + 'px';
             yesBtn.style.margin = '0';
             yesBtn.style.zIndex = '500';
+            yesBtn.offsetHeight; // Force reflow
+            yesBtn.style.transition = ''; // Restore smooth CSS transition
             isRunning = true;
         }
 
         const padding = 12;
         const minX = padding;
-        const maxX = cardRect.width - btnW - padding;
+        const maxX = Math.max(minX, cardRect.width - btnW - padding);
         const minY = padding;
-        const maxY = cardRect.height - btnH - padding;
+        const maxY = Math.max(minY, cardRect.height - btnH - padding);
 
         // Generate random positions safely inside the card
-        const randomX = Math.max(minX, Math.min(maxX, Math.floor(Math.random() * (maxX - minX)) + minX));
-        const randomY = Math.max(minY, Math.min(maxY, Math.floor(Math.random() * (maxY - minY)) + minY));
+        const randomX = Math.random() * (maxX - minX) + minX;
+        const randomY = Math.random() * (maxY - minY) + minY;
 
         yesBtn.style.left = randomX + 'px';
         yesBtn.style.top = randomY + 'px';

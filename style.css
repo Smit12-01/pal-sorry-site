@@ -581,11 +581,21 @@ body {
 }
 
 /* Running state (yesBtn in final stage runs away) */
-.btn-run {
-    position: absolute !important;
-    z-index: 500;
-    transition: left 0.32s var(--ease-spring), top 0.32s var(--ease-spring) !important;
-    pointer-events: auto;
+@media (min-width: 769px) {
+    .btn-run {
+        position: fixed !important;
+        z-index: 9999;
+        transition: left 0.32s var(--ease-spring), top 0.32s var(--ease-spring) !important;
+        pointer-events: auto;
+    }
+}
+@media (max-width: 768px) {
+    .btn-run {
+        position: absolute !important;
+        z-index: 500;
+        transition: left 0.32s var(--ease-spring), top 0.32s var(--ease-spring) !important;
+        pointer-events: auto;
+    }
 }
 
 /* Mobile: restore pointer */
